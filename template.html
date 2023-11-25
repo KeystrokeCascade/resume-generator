@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ name }} - Resume</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="shortcut icon" href="favicon.ico" type="image/ico">
+	</head>
+
+	<body>
+		<h1>{{ name }}</h1>
+
+		<p class="center">
+			<b>Email:</b> {{ email.replace('@', '{at}') }} | <b>Address:</b> {{ address }}
+		</p>
+
+		<h2>Summary</h2>
+
+		{% for paragraph in summary %}
+		<p>
+			{{ paragraph }}
+		</p>
+		{% endfor %}
+
+		{% for experience in experiences %}
+		<h2>{{ experience['name'] }}</h2>
+
+		<div class="listing">
+			{% for item in experience['items'] %}
+			<div>
+				{{ item['date'].replace('–', '–<br>') }}
+			</div>
+			<div>
+				{{ item['achievement'] }}<br>
+				{{ item['name'] }}
+				{% if item['info'] %}
+				<ul>
+					{% for i in item['info'] %}
+					<li>{{ i }}</li>
+					{% endfor %}
+				</ul>
+				{% endif %}
+			</div>
+			{% endfor %}
+		</div>
+
+		{% endfor %}
+		<h2>Referees</h2>
+
+		<p>{{ referees }}</p>
+
+		<footer>© {{ name }} {{ date }}</footer>
+	</body>
+</html>

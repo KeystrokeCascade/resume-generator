@@ -1,0 +1,60 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{parskip}
+\usepackage[lining]{ebgaramond}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\setlist{
+	parsep=0em
+}
+\hypersetup{
+	colorlinks=true,
+	allcolors=cyan,
+	pdftitle={Resume},
+	pdfauthor={\VAR{ name }},
+	pdfcreator={LuaLaTeX}
+}
+
+\begin{document}
+
+\begin{flushright}
+	\Huge
+	\textbf{\VAR{ name }} \\
+	\Large
+	\textbf{\VAR{ address }} \\
+	\textbf{M: \href{tel:\VAR{ phone }}{\VAR{ phone }}} \\
+	\textbf{E: \href{mailto:\VAR{ email }}{\VAR{ email }}}
+\end{flushright}
+
+
+\section*{Summary}
+
+\BLOCK{ for paragraph in summary }
+\VAR{ paragraph.replace('#', '\#') }
+
+\BLOCK{ endfor }
+
+\BLOCK{ for experience in experiences }
+\section*{\VAR{ experience['name'] }}
+
+\BLOCK{ for item in experience['items'] }
+\subsection*{\VAR{ item['name'] } \hfill\normalsize \VAR{ item['date'] }}
+
+\VAR{ item['achievement'] }
+
+\BLOCK{ if item['info'] }
+\begin{itemize}
+	\BLOCK{ for i in item['info'] }
+	\item \VAR{ i }
+	\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+\BLOCK{ endfor }
+
+\BLOCK{ endfor }
+\section*{Referees}
+
+\VAR{ referees }
+
+\end{document}
