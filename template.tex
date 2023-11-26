@@ -26,7 +26,6 @@
 	\textbf{E: \href{mailto:\VAR{ email }}{\VAR{ email }}}
 \end{flushright}
 
-
 \section*{Summary}
 
 \BLOCK{ for paragraph in summary }
@@ -38,6 +37,8 @@
 \section*{\VAR{ experience['name'] }}
 
 \BLOCK{ for item in experience['items'] }
+\noindent\begin{minipage}{\textwidth}
+\raggedright
 \subsection*{\VAR{ item['name'] } \hfill\normalsize \VAR{ item['date'] }}
 
 \VAR{ item['achievement'] }
@@ -45,16 +46,20 @@
 \BLOCK{ if item['info'] }
 \begin{itemize}
 	\BLOCK{ for i in item['info'] }
-	\item \VAR{ i }
+	\item \VAR{ i.replace('%', '\%') }
 	\BLOCK{ endfor }
 \end{itemize}
 \BLOCK{ endif }
+\end{minipage}
 
 \BLOCK{ endfor }
 
 \BLOCK{ endfor }
-\section*{Referees}
+\section*{Referees and Academic Transcript}
 
-\VAR{ referees }
+\BLOCK{ for reference in referees }
+\VAR{ reference }
+
+\BLOCK{ endfor }
 
 \end{document}

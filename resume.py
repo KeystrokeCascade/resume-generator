@@ -7,12 +7,13 @@ import subprocess
 
 # Constants
 DATA = 'resume.yaml'
-WEBSITE_LOCATION = '/var/www/resume/'
+PROGRAM_LOCATION = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+WEBSITE_LOCATION = '/srv'
 HTML_TEMPLATE = 'template.html'
 HTML_NAME = 'index'
 LATEX_TEMPLATE = 'template.tex'
 LATEX_NAME = 'index'
-LATEX_SUBDIR = 'pdf/'
+LATEX_SUBDIR = 'pdf'
 DATE = datetime.datetime.now().year
 
 # Get the good stuff
@@ -70,6 +71,19 @@ def latexDoc(id):
 
 	return doc
 
+# Generate website structure including symbolic links
+def genStructure(website, path):
+	# Generate folders
+	if not os.path.exists(os.path.join(path, LATEX_SUBDIR)):
+		os.makedirs(os.path.join(path, LATEX_SUBDIR))
+	# Generate internal symlinks
+	for file in os.listdir(os.path.join(PROGRAM_LOCATION, 'data')):
+		if not os.path.exists(os.path.join(PROGRAM_LOCATION, 'data', file)):
+			os.symlink(os.path.join(PROGRAM_LOCATION, 'data', file), os.path.join(path, file))
+	# Generate symlink from website location to here
+	if not os.path.exists(os.path.join(WEBSITE_LOCATION, website)):
+		os.symlink(path, os.path.join(WEBSITE_LOCATION, website))
+
 # Write out to file
 def write(doc, filename):
 	with open(filename, mode='w', encoding='utf8') as f:
@@ -78,12 +92,15 @@ def write(doc, filename):
 # Execute time
 for id in resume['ids']:
 	website = id['email'].split('@')[1]  # Website from email
-	path = WEBSITE_LOCATION + website + '/'
-	write(htmlDoc(id), path + HTML_NAME + '.html')
-	write(latexDoc(id), path + LATEX_SUBDIR + LATEX_NAME + '.tex')
+	path = os.path.join(PROGRAM_LOCATION, website)
+	genStructure(website, path)
+	write(htmlDoc(id), os.path.join(path, HTML_NAME + '.html'))
+	write(latexDoc(id), os.path.join(path, LATEX_SUBDIR,  LATEX_NAME + '.tex'))
 	# Compile LaTeX doc and delete log files if no err
-	out = subprocess.run(['lualatex', '--output-directory=' + path + LATEX_SUBDIR, path + LATEX_SUBDIR + LATEX_NAME + '.tex'])
+	out = subprocess.run(['lualatex',
+		'--output-directory=' + os.path.join(path, LATEX_SUBDIR),
+		 os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.tex')])
 	if not out.returncode:
-		os.remove(path + LATEX_SUBDIR + LATEX_NAME + '.aux')
-		os.remove(path + LATEX_SUBDIR + LATEX_NAME + '.log')
-		os.remove(path + LATEX_SUBDIR + LATEX_NAME + '.out')
+		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.aux'))
+		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.log'))
+		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.out'))

@@ -47,9 +47,13 @@
 		</div>
 
 		{% endfor %}
-		<h2>Referees</h2>
+		<h2>Referees and Academic Transcript</h2>
 
-		<p>{{ referees }}</p>
+		{% for reference in referees %}
+		<p>
+			{{ reference }}
+		</p>
+		{% endfor %}
 
 		<footer>© {{ name }} {{ date }}</footer>
 	</body>
