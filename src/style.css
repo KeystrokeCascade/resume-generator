@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+body {
+	width: 60%;
+	max-width: 600px;
+	margin: 0 auto;
+	margin-bottom: 10em;
+	font-family: Open Sans, sans-serif;
+}
+
+h1, .center, footer {
+	text-align: center;
+}
+
+.listing {
+	display: grid;
+	gap: 1em;
+	grid-template-columns: 125px 1fr;
+}
+
+ul {
+	margin: 0;
+}
+
+footer {
+	font-size: 10pt;
+	margin-top: 3rem;
+}
+
+@media only screen and (max-width: 600px) {
+	body {
+		width: 90%;
+	}
+	.listing {
+		grid-template-columns: 75px 1fr;
+	}
+}
+
+@media print {
+	body {
+		width: 100%;
+	}
+}
+

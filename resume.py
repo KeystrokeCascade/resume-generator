@@ -2,12 +2,13 @@
 import yaml
 import jinja2
 import os
+import shutil
 import datetime
 import subprocess
 
 # Constants
 DATA = 'resume.yaml'
-PROGRAM_LOCATION = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+PROGRAM_LOCATION = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 WEBSITE_LOCATION = '/srv'
 HTML_TEMPLATE = 'template.html'
 HTML_NAME = 'index'
@@ -76,13 +77,12 @@ def genStructure(website, path):
 	# Generate folders
 	if not os.path.exists(os.path.join(path, LATEX_SUBDIR)):
 		os.makedirs(os.path.join(path, LATEX_SUBDIR))
-	# Generate internal symlinks
-	for file in os.listdir(os.path.join(PROGRAM_LOCATION, 'data')):
-		if not os.path.exists(os.path.join(PROGRAM_LOCATION, 'data', file)):
-			os.symlink(os.path.join(PROGRAM_LOCATION, 'data', file), os.path.join(path, file))
-	# Generate symlink from website location to here
-	if not os.path.exists(os.path.join(WEBSITE_LOCATION, website)):
-		os.symlink(path, os.path.join(WEBSITE_LOCATION, website))
+	# Copy additional files
+	for file in os.listdir(os.path.join(PROGRAM_LOCATION, 'src')):
+		shutil.copy2(os.path.join(PROGRAM_LOCATION, 'src', file), os.path.join(path, file))
+	# Generate symlink from here to website location
+	if not os.path.exists(os.path.join(PROGRAM_LOCATION, 'sites', website)):
+		os.symlink(path, os.path.join(PROGRAM_LOCATION, 'sites', website))
 
 # Write out to file
 def write(doc, filename):
@@ -92,7 +92,7 @@ def write(doc, filename):
 # Execute time
 for id in resume['ids']:
 	website = id['email'].split('@')[1]  # Website from email
-	path = os.path.join(PROGRAM_LOCATION, website)
+	path = os.path.join(WEBSITE_LOCATION, website)
 	genStructure(website, path)
 	write(htmlDoc(id), os.path.join(path, HTML_NAME + '.html'))
 	write(latexDoc(id), os.path.join(path, LATEX_SUBDIR,  LATEX_NAME + '.tex'))
