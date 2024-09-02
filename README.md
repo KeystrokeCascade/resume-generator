@@ -5,4 +5,10 @@ Using Jinja2 in Python it reads a YAML file containing resume details, and then 
 
 The template is very flexible, as it allows for multiple identities with various names and emails for the same resume.  Each section is iterated over allowing for any amount of sections and any amount of positions/experience within those sections.
 
-Copy `resume.yaml.sample` into `resume.yaml` if you want to use a template.
+---
+
+To get started, copy `resume.yaml.sample` into `resume.yaml` if you want to use a template.
+
+```
+cp resume.yaml.sample resume.yaml
+```
