@@ -47,7 +47,7 @@ def renderEnv(env, template, id):
 # HTML generation
 def htmlDoc(id):
 	env = loadEnv()
-	template = os.path.join(PROGRAM_LOCATION, HTML_TEMPLATE)
+	template = HTML_TEMPLATE
 	doc = renderEnv(env, template, id)
 
 	return doc
@@ -67,7 +67,7 @@ def latexDoc(id):
 	env.line_comment_prefix = '%#'
 	env.autoescape = False
 
-	template = os.path.join(PROGRAM_LOCATION, LATEX_TEMPLATE)
+	template = LATEX_TEMPLATE
 	doc = renderEnv(env, template, id)
 
 	return doc
