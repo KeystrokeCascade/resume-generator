@@ -18,7 +18,7 @@ LATEX_SUBDIR = 'pdf'
 DATE = datetime.datetime.now().year
 
 # Get the good stuff
-with open(DATA, mode='r', encoding='utf8') as f:
+with open(os.path.join(PROGRAM_LOCATION, DATA), mode='r', encoding='utf8') as f:
 	resume = yaml.safe_load(f)
 
 def loadEnv():
@@ -47,7 +47,7 @@ def renderEnv(env, template, id):
 # HTML generation
 def htmlDoc(id):
 	env = loadEnv()
-	template = HTML_TEMPLATE
+	template = os.path.join(PROGRAM_LOCATION, HTML_TEMPLATE)
 	doc = renderEnv(env, template, id)
 
 	return doc
@@ -67,7 +67,7 @@ def latexDoc(id):
 	env.line_comment_prefix = '%#'
 	env.autoescape = False
 
-	template = LATEX_TEMPLATE
+	template = os.path.join(PROGRAM_LOCATION, LATEX_TEMPLATE)
 	doc = renderEnv(env, template, id)
 
 	return doc
