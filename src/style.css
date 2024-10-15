@@ -12,6 +12,11 @@ h1, .center, footer {
 	text-align: center;
 }
 
+.skills {
+	column-count: 3;
+	padding-left: 1em;
+}
+
 .listing {
 	display: grid;
 	gap: 1em;

@@ -4,6 +4,7 @@
 \usepackage[lining]{ebgaramond}
 \usepackage{hyperref}
 \usepackage{enumitem}
+\usepackage{multicol}
 
 \setlist{
 	parsep=0em
@@ -34,15 +35,25 @@
 
 \BLOCK{ endfor }
 
+\section*{Skills}
+
+\begin{multicols}{3}
+\begin{itemize}
+	\BLOCK{ for skill in skills }
+	\item \VAR{ skill.replace('&', '\&') }
+	\BLOCK{ endfor }
+\end{itemize}
+\end{multicols}
+
 \BLOCK{ for experience in experiences }
 \section*{\VAR{ experience['name'] }}
 
 \BLOCK{ for item in experience['items'] }
 \noindent\begin{minipage}{\textwidth}
 \raggedright
-\subsection*{\VAR{ item['name'] } \hfill\normalsize \VAR{ item['date'] }}
+\textbf{\VAR{ item['achievement'] }} \hfill \VAR{ item['date'] }
 
-\VAR{ item['achievement'] }
+\VAR{ item['name'] }
 
 \BLOCK{ if item['info'] }
 \begin{itemize}
@@ -52,6 +63,7 @@
 \end{itemize}
 \BLOCK{ endif }
 \end{minipage}
+\vspace{2pt}
 
 \BLOCK{ endfor }
 

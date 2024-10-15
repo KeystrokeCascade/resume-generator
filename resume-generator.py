@@ -38,6 +38,7 @@ def renderEnv(env, template, id):
 		address = resume['address'],
 		phone = resume['phone'],
 		summary = resume['summary'].split('\n\n'),
+		skills = resume['skills'],
 		experiences = resume['experiences'],
 		referees = resume['referees'],
 		date = DATE

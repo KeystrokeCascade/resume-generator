@@ -8,6 +8,10 @@ phone: '1234567890'
 summary: |-
   A big paragraph summarising my experience in the job industry.
 
+skills:
+  - 'Being cool'
+  - 'Making lots of money'
+  - 'Winning the lottery'
 
 experiences:
   - education:
