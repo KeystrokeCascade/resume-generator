@@ -13,7 +13,7 @@ To get started, copy `resume.yaml.sample` into `resume.yaml` if you want to use 
 cp resume.yaml.sample resume.yaml
 ```
 
-To run, use uv
+To run, use uv.
 
 ```
 uv run resume-generator.py
