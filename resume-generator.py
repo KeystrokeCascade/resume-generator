@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import yaml
 import jinja2
 import os
@@ -9,17 +8,14 @@ import subprocess
 # Constants
 DATA = 'resume.yaml'
 PROGRAM_LOCATION = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-WEBSITE_LOCATION = '/srv'
+WEBSITE_LOCATION = '/public'
+TEMPLATE_LOCATION = '/templates'
 HTML_TEMPLATE = 'template.html'
 HTML_NAME = 'index'
 LATEX_TEMPLATE = 'template.tex'
 LATEX_NAME = 'index'
 LATEX_SUBDIR = 'pdf'
 DATE = datetime.datetime.now().year
-
-# Get the good stuff
-with open(os.path.join(PROGRAM_LOCATION, DATA), mode='r', encoding='utf8') as f:
-	resume = yaml.safe_load(f)
 
 def loadEnv():
 	# Set location and create environment
@@ -33,8 +29,8 @@ def loadEnv():
 
 def renderEnv(env, template, id):
 	render = env.get_template(template).render(
-		name = id['name'],
-		email = id['email'],
+		name = resume['name'],
+		email = resume['email'],
 		address = resume['address'],
 		phone = resume['phone'],
 		summary = resume['summary'].split('\n\n'),
@@ -91,8 +87,12 @@ def write(doc, filename):
 		f.write(doc)
 
 # Execute time
-for id in resume['ids']:
-	website = id['email'].split('@')[1]  # Website from email
+def main():
+	# Load settings
+	with open(os.path.join(PROGRAM_LOCATION, DATA), mode='r', encoding='utf8') as f:
+		resume = yaml.safe_load(f)
+
+	website = resume['email'].split('@')[1]  # Website from email
 	path = os.path.join(WEBSITE_LOCATION, website)
 	genStructure(website, path)
 	write(htmlDoc(id), os.path.join(path, HTML_NAME + '.html'))
@@ -105,3 +105,6 @@ for id in resume['ids']:
 		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.aux'))
 		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.log'))
 		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.out'))
+
+if __name__ == "__main__":
+    main()
