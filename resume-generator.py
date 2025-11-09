@@ -13,7 +13,7 @@ LATEX_TEMPLATE = 'index.tex'
 LATEX_SUBDIR = 'pdf'
 DATE = datetime.datetime.now().year
 
-def loadEnv():
+def load_env():
 	# Set location and create environment
 	env = jinja2.Environment(
 		loader=jinja2.FileSystemLoader('templates'),
@@ -22,7 +22,7 @@ def loadEnv():
 	)
 	return env
 
-def renderEnv(env, template, resume):
+def render_env(env, template, resume):
 	render = env.get_template(template).render(
 		name = resume['name'],
 		email = resume['email'],
@@ -37,17 +37,15 @@ def renderEnv(env, template, resume):
 	return render
 
 # HTML generation
-def htmlDoc(resume):
-	env = loadEnv()
+def html_doc(resume):
+	env = load_env()
 	template = HTML_TEMPLATE
-	doc = renderEnv(env, template, resume)
-
+	doc = render_env(env, template, resume)
 	return doc
 
 # LaTeX generation
-def latexDoc(resume):
-	env = loadEnv()
-
+def latex_doc(resume):
+	env = load_env()
 	# LaTeX-specific environment changes
 	env.block_start_string = '\\BLOCK{'
 	env.block_end_string = '}'
@@ -60,8 +58,7 @@ def latexDoc(resume):
 	env.autoescape = False
 
 	template = LATEX_TEMPLATE
-	doc = renderEnv(env, template, resume)
-
+	doc = render_env(env, template, resume)
 	return doc
 
 # Execute time
@@ -78,9 +75,9 @@ def main():
 
 	# Write out
 	with open(os.path.join(OUTPUT_DIR, HTML_TEMPLATE), mode='w', encoding='utf8') as f:
-		f.write(htmlDoc(resume))
+		f.write(html_doc(resume))
 	with open(os.path.join(OUTPUT_DIR, LATEX_SUBDIR, LATEX_TEMPLATE), mode='w', encoding='utf8') as f:
-		f.write(latexDoc(resume))
+		f.write(latex_doc(resume))
 
 	# Compile LaTeX doc and delete log files if no err
 	out = subprocess.run([

@@ -1,9 +1,7 @@
-ids:
-  - name: 'John'
-    email: 'john@example.com'
+name: 'John'
+email: 'john@example.com'
 address: 'The Internet'
 phone: '1234567890'
-
 
 summary: |-
   A big paragraph summarising my experience in the job industry.
