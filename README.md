@@ -19,4 +19,4 @@ To run, use uv.
 uv run resume-generator.py
 ```
 
-Outputs to `public` directory in working folder.
+Outputs to the `public` directory in working folder.
