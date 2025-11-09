@@ -49,11 +49,11 @@ def latexDoc(resume):
 	env = loadEnv()
 
 	# LaTeX-specific environment changes
-	env.block_start_string = '\BLOCK{'
+	env.block_start_string = '\\BLOCK{'
 	env.block_end_string = '}'
-	env.variable_start_string = '\VAR{'
+	env.variable_start_string = '\\VAR{'
 	env.variable_end_string = '}'
-	env.comment_start_string = '\#{'
+	env.comment_start_string = '\\#{'
 	env.comment_end_string = '}'
 	env.line_statement_prefix = '%%'
 	env.line_comment_prefix = '%#'
@@ -85,13 +85,13 @@ def main():
 	# Compile LaTeX doc and delete log files if no err
 	out = subprocess.run([
 		'lualatex',
-		'--output-directory=' + OUTPUT_DIR,
+		'--output-directory=' + os.path.join(OUTPUT_DIR, LATEX_SUBDIR),
 		os.path.join(OUTPUT_DIR, LATEX_SUBDIR, LATEX_TEMPLATE)
 	])
 	if not out.returncode:
 		for file in os.listdir(os.path.join(OUTPUT_DIR, LATEX_SUBDIR)):
 			if file.split('.')[-1] in ['aux', 'log', 'out']:
-				os.remove(os.path.join(OUTPUT_DIR, LATEX_SUBDIR + file))
+				os.remove(os.path.join(OUTPUT_DIR, LATEX_SUBDIR, file))
 
 if __name__ == '__main__':
     main()
