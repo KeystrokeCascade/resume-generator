@@ -12,4 +12,4 @@ wheels/
 # Custom
 resume.yaml
 *.pdf
-public/
+public
