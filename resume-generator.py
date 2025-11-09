@@ -6,28 +6,23 @@ import datetime
 import subprocess
 
 # Constants
-DATA = 'resume.yaml'
-PROGRAM_LOCATION = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-WEBSITE_LOCATION = '/public'
-TEMPLATE_LOCATION = '/templates'
-HTML_TEMPLATE = 'template.html'
-HTML_NAME = 'index'
-LATEX_TEMPLATE = 'template.tex'
-LATEX_NAME = 'index'
+RESUME = 'resume.yaml'
+OUTPUT_DIR = 'public'
+HTML_TEMPLATE = 'index.html'
+LATEX_TEMPLATE = 'index.tex'
 LATEX_SUBDIR = 'pdf'
 DATE = datetime.datetime.now().year
 
 def loadEnv():
 	# Set location and create environment
-	dir = os.path.dirname(os.path.abspath(__file__))
 	env = jinja2.Environment(
-		loader=jinja2.FileSystemLoader(dir),
+		loader=jinja2.FileSystemLoader('templates'),
 		trim_blocks = True,
 		lstrip_blocks = True
 	)
 	return env
 
-def renderEnv(env, template, id):
+def renderEnv(env, template, resume):
 	render = env.get_template(template).render(
 		name = resume['name'],
 		email = resume['email'],
@@ -42,15 +37,15 @@ def renderEnv(env, template, id):
 	return render
 
 # HTML generation
-def htmlDoc(id):
+def htmlDoc(resume):
 	env = loadEnv()
 	template = HTML_TEMPLATE
-	doc = renderEnv(env, template, id)
+	doc = renderEnv(env, template, resume)
 
 	return doc
 
 # LaTeX generation
-def latexDoc(id):
+def latexDoc(resume):
 	env = loadEnv()
 
 	# LaTeX-specific environment changes
@@ -65,46 +60,38 @@ def latexDoc(id):
 	env.autoescape = False
 
 	template = LATEX_TEMPLATE
-	doc = renderEnv(env, template, id)
+	doc = renderEnv(env, template, resume)
 
 	return doc
-
-# Generate website structure including symbolic links
-def genStructure(website, path):
-	# Generate folders
-	if not os.path.exists(os.path.join(path, LATEX_SUBDIR)):
-		os.makedirs(os.path.join(path, LATEX_SUBDIR))
-	# Copy additional files
-	for file in os.listdir(os.path.join(PROGRAM_LOCATION, 'src')):
-		shutil.copy2(os.path.join(PROGRAM_LOCATION, 'src', file), os.path.join(path, file))
-	# Generate symlink from here to website location
-	if not os.path.exists(os.path.join(PROGRAM_LOCATION, 'sites', website)):
-		os.symlink(path, os.path.join(PROGRAM_LOCATION, 'sites', website))
-
-# Write out to file
-def write(doc, filename):
-	with open(filename, mode='w', encoding='utf8') as f:
-		f.write(doc)
 
 # Execute time
 def main():
 	# Load settings
-	with open(os.path.join(PROGRAM_LOCATION, DATA), mode='r', encoding='utf8') as f:
+	with open(RESUME, mode='r', encoding='utf8') as f:
 		resume = yaml.safe_load(f)
 
-	website = resume['email'].split('@')[1]  # Website from email
-	path = os.path.join(WEBSITE_LOCATION, website)
-	genStructure(website, path)
-	write(htmlDoc(id), os.path.join(path, HTML_NAME + '.html'))
-	write(latexDoc(id), os.path.join(path, LATEX_SUBDIR,  LATEX_NAME + '.tex'))
-	# Compile LaTeX doc and delete log files if no err
-	out = subprocess.run(['lualatex',
-		'--output-directory=' + os.path.join(path, LATEX_SUBDIR),
-		 os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.tex')])
-	if not out.returncode:
-		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.aux'))
-		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.log'))
-		os.remove(os.path.join(path, LATEX_SUBDIR, LATEX_NAME + '.out'))
+	# Generate folders
+	os.makedirs(os.path.dirname(os.path.join(OUTPUT_DIR, LATEX_SUBDIR, LATEX_TEMPLATE)), exist_ok=True)
+	# Copy static files
+	for file in os.listdir('static'):
+		shutil.copy2(os.path.join('static', file), os.path.join(OUTPUT_DIR, file))
 
-if __name__ == "__main__":
+	# Write out
+	with open(os.path.join(OUTPUT_DIR, HTML_TEMPLATE), mode='w', encoding='utf8') as f:
+		f.write(htmlDoc(resume))
+	with open(os.path.join(OUTPUT_DIR, LATEX_SUBDIR, LATEX_TEMPLATE), mode='w', encoding='utf8') as f:
+		f.write(latexDoc(resume))
+
+	# Compile LaTeX doc and delete log files if no err
+	out = subprocess.run([
+		'lualatex',
+		'--output-directory=' + OUTPUT_DIR,
+		os.path.join(OUTPUT_DIR, LATEX_SUBDIR, LATEX_TEMPLATE)
+	])
+	if not out.returncode:
+		for file in os.listdir(os.path.join(OUTPUT_DIR, LATEX_SUBDIR)):
+			if file.split('.')[-1] in ['aux', 'log', 'out']:
+				os.remove(os.path.join(OUTPUT_DIR, LATEX_SUBDIR + file))
+
+if __name__ == '__main__':
     main()
