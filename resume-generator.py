@@ -91,4 +91,4 @@ def main():
 				os.remove(os.path.join(OUTPUT_DIR, LATEX_SUBDIR, file))
 
 if __name__ == '__main__':
-    main()
+	main()
